@@ -1,0 +1,147 @@
+/* ==========================================================================
+   Kachuno Design Tokens (Step 1.4)
+   Calm, deliberate, warm productivity aesthetic
+   ========================================================================== */
+
+:root {
+  /* Color Palette - Forest & Sage & Warm Neutral */
+  --color-primary: #1B4332;
+  --color-primary-hover: #143527;
+  --color-primary-light: #52796F;
+  --color-primary-subtle: #E9F2EE;
+  --color-primary-border: #BCD5C9;
+  
+  --color-accent: #BC6C25;
+  --color-accent-light: #DDA15E;
+  --color-accent-subtle: #FDF4E7;
+
+  --color-bg: #FAF7F2;
+  --color-bg-subtle: #F3EFE8;
+  --color-surface: #FFFFFF;
+  --color-surface-raised: #FFFFFF;
+  --color-surface-sunken: #EFECE5;
+
+  --color-text-primary: #15221B;
+  --color-text-secondary: #4A5B52;
+  --color-text-muted: #74857C;
+  --color-text-inverse: #FFFFFF;
+
+  --color-border: #E3DDD4;
+  --color-border-subtle: #EDE8E1;
+  --color-border-strong: #C8C0B4;
+
+  --color-focus-ring: #2D6A4F;
+  
+  /* Status Colors (Accessible & Muted) */
+  --color-success: #2D6A4F;
+  --color-success-bg: #E8F4EE;
+  --color-warning: #B07219;
+  --color-warning-bg: #FDF5E6;
+  --color-danger: #B43B3B;
+  --color-danger-bg: #FBECEC;
+  --color-info: #2B6CB0;
+  --color-info-bg: #EBF3FC;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;     /* 12px */
+  --font-size-sm: 0.875rem;    /* 14px */
+  --font-size-base: 1rem;      /* 16px */
+  --font-size-lg: 1.125rem;    /* 18px */
+  --font-size-xl: 1.25rem;     /* 20px */
+  --font-size-2xl: 1.5rem;     /* 24px */
+  --font-size-3xl: 1.875rem;   /* 30px */
+  --font-size-4xl: 2.25rem;    /* 36px */
+
+  /* Spacing Scale (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Border Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;           /* default */
+  --radius-lg: 12px;          /* cards */
+  --radius-xl: 16px;          /* modals, hero */
+  --radius-full: 9999px;      /* pills / badges */
+
+  /* Shadows (Subtle, organic) */
+  --shadow-sm: 0 1px 2px 0 rgba(21, 34, 27, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(21, 34, 27, 0.08), 0 2px 4px -2px rgba(21, 34, 27, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(21, 34, 27, 0.08), 0 4px 6px -4px rgba(21, 34, 27, 0.03);
+  --shadow-card: 0 2px 8px -2px rgba(21, 34, 27, 0.06), 0 1px 3px 0 rgba(21, 34, 27, 0.04);
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Mobile Safe Area Insets (Capacitor & iOS/Android) */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  /* App Shell Geometry */
+  --sidebar-width: 260px;
+  --mobile-nav-height: 64px;
+  --header-height: 64px;
+  --container-max-width: 1200px;
+}
+
+/* Dark Mode Support (System & User preference) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-primary: #52B788;
+    --color-primary-hover: #74C69D;
+    --color-primary-light: #40916C;
+    --color-primary-subtle: #162C22;
+    --color-primary-border: #244C3A;
+
+    --color-accent: #E09F3E;
+    --color-accent-light: #ECC078;
+    --color-accent-subtle: #2C2214;
+
+    --color-bg: #111613;
+    --color-bg-subtle: #171E1A;
+    --color-surface: #1B231F;
+    --color-surface-raised: #222C27;
+    --color-surface-sunken: #151C18;
+
+    --color-text-primary: #EEF3F0;
+    --color-text-secondary: #A4B5AC;
+    --color-text-muted: #73847B;
+    --color-text-inverse: #111613;
+
+    --color-border: #2A3630;
+    --color-border-subtle: #202924;
+    --color-border-strong: #3D4C44;
+
+    --color-focus-ring: #52B788;
+
+    --color-success: #52B788;
+    --color-success-bg: #162C22;
+    --color-warning: #E09F3E;
+    --color-warning-bg: #2B2112;
+    --color-danger: #E06C75;
+    --color-danger-bg: #2C181A;
+    --color-info: #61AFEF;
+    --color-info-bg: #142436;
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    --shadow-card: 0 2px 8px -2px rgba(0, 0, 0, 0.35);
+  }
+}
