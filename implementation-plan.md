@@ -150,16 +150,16 @@ Each placeholder must:
 
 | Test | Expected Result | Status |
 |---|---|---|
-| `npm install` | No errors | ☐ |
-| `npm run dev` | Dev server starts, app loads | ☐ |
-| `npm run build` | Production build succeeds | ☐ |
-| Navigate all 5 screens | Routes work, active state shown | ☐ |
-| Test at ~375px width | Mobile nav, no overflow | ☐ |
-| Test at ~768px width | Layout transition works | ☐ |
-| Test at ~1280px width | Desktop sidebar visible | ☐ |
-| Keyboard tab through nav | Visible focus, all items reachable | ☐ |
-| Browser console | No errors from new code | ☐ |
-| No fake metrics visible | Confirmed | ☐ |
+| `npm install` | No errors | [x] |
+| `npm run dev` | Dev server starts, app loads | [x] |
+| `npm run build` | Production build succeeds | [x] |
+| Navigate all 5 screens | Routes work, active state shown | [x] |
+| Test at ~375px width | Mobile nav, no overflow | [x] |
+| Test at ~768px width | Layout transition works | [x] |
+| Test at ~1280px width | Desktop sidebar visible | [x] |
+| Keyboard tab through nav | Visible focus, all items reachable | [x] |
+| Browser console | No errors from new code | [x] |
+| No fake metrics visible | Confirmed | [x] |
 
 ### Day 1 Commit
 
