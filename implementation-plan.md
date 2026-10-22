@@ -295,21 +295,21 @@ formatDisplayDate(date: string): string
 
 | Test | Expected Result | Status |
 |---|---|---|
-| Create task with only title | Works, defaults applied | ☐ |
-| Create task with all fields | All fields saved correctly | ☐ |
-| Reject whitespace-only title | Validation error shown | ☐ |
-| Edit every field | Changes persist | ☐ |
-| Complete → reopen task | `completed_at` set/cleared correctly | ☐ |
-| Delete task + cancel confirmation | Task survives cancellation | ☐ |
-| Delete task + confirm | Task removed from all views | ☐ |
-| Combine filters (category + priority + status) | AND semantics work | ☐ |
-| Clear filters | Full list returns | ☐ |
-| Task with no due date | Visible in Tasks, not in "due today" | ☐ |
-| Task due today | Appears in My Day | ☐ |
-| Task due yesterday (incomplete) | Appears as overdue | ☐ |
-| Completed overdue task | NOT counted as overdue | ☐ |
-| `npm run build` | Passes | ☐ |
-| Reload behavior | Matches documented storage (temp/local) | ☐ |
+| Create task with only title | Works, defaults applied | [x] |
+| Create task with all fields | All fields saved correctly | [x] |
+| Reject whitespace-only title | Validation error shown | [x] |
+| Edit every field | Changes persist | [x] |
+| Complete → reopen task | `completed_at` set/cleared correctly | [x] |
+| Delete task + cancel confirmation | Task survives cancellation | [x] |
+| Delete task + confirm | Task removed from all views | [x] |
+| Combine filters (category + priority + status) | AND semantics work | [x] |
+| Clear filters | Full list returns | [x] |
+| Task with no due date | Visible in Tasks, not in "due today" | [x] |
+| Task due today | Appears in My Day | [x] |
+| Task due yesterday (incomplete) | Appears as overdue | [x] |
+| Completed overdue task | NOT counted as overdue | [x] |
+| `npm run build` | Passes | [x] |
+| Reload behavior | Matches documented storage (temp/local) | [x] |
 
 ### Day 2 Commit
 

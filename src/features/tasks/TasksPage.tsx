@@ -1,69 +1,159 @@
+import { useState } from 'react';
 import type { FC } from 'react';
-import { CheckSquare, Filter, Plus, Tag } from 'lucide-react';
+import { CheckSquare, Plus, Filter } from 'lucide-react';
+import type { Task, CreateTaskInput, UpdateTaskInput, TaskFilters as TaskFiltersType } from '../../types/task';
+import { useTasks } from './useTasks';
+import { TaskList } from './TaskList';
+import { TaskFilters } from './TaskFilters';
+import { TaskForm } from './TaskForm';
+
+const DEFAULT_FILTERS: TaskFiltersType = {
+  status: 'all',
+  priority: 'all',
+  category: 'all',
+  dueDate: 'all',
+  searchQuery: '',
+};
 
 export const TasksPage: FC = () => {
+  const [filters, setFilters] = useState<TaskFiltersType>(DEFAULT_FILTERS);
+  const [showFilterPanel, setShowFilterPanel] = useState<boolean>(true);
+  const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+
+  const {
+    tasks,
+    loading,
+    createTask,
+    updateTask,
+    toggleComplete,
+    deleteTask,
+  } = useTasks(filters);
+
+  const hasActiveFilters =
+    (filters.status !== 'all' && Boolean(filters.status)) ||
+    (filters.priority !== 'all' && Boolean(filters.priority)) ||
+    (filters.category !== 'all' && Boolean(filters.category)) ||
+    (filters.dueDate !== 'all' && Boolean(filters.dueDate)) ||
+    Boolean(filters.searchQuery?.trim());
+
+  const handleOpenCreate = () => {
+    setEditingTask(null);
+    setIsFormOpen(true);
+  };
+
+  const handleOpenEdit = (task: Task) => {
+    setEditingTask(task);
+    setIsFormOpen(true);
+  };
+
+  const handleFormSubmit = async (data: CreateTaskInput | UpdateTaskInput) => {
+    if (editingTask) {
+      await updateTask(editingTask.id, data as UpdateTaskInput);
+    } else {
+      await createTask(data as CreateTaskInput);
+    }
+  };
+
+  const handleClearFilters = () => {
+    setFilters(DEFAULT_FILTERS);
+  };
+
   return (
-    <div className="page-container placeholder-view">
+    <div className="page-container tasks-container">
+      {/* Page Header */}
       <section className="hero-card" aria-labelledby="tasks-heading">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-primary)', marginBottom: '8px' }}>
           <CheckSquare size={20} aria-hidden="true" />
           <span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Task Organizer
+            Deliberate Action
           </span>
         </div>
         <h1 id="tasks-heading" className="hero-title">
           All Tasks
         </h1>
         <p className="hero-subtitle">
-          Manage your master inventory of responsibilities across Study, Work, Personal, and Projects with clear priorities and due dates.
+          Organize your responsibilities across Study, Work, Personal, and Projects. Steady execution without overwhelm.
         </p>
       </section>
 
-      <section className="placeholder-card" aria-label="Tasks Coming Soon">
-        <div className="placeholder-icon-wrap">
-          <CheckSquare size={28} aria-hidden="true" />
-        </div>
-        <h2 className="placeholder-heading">Task Management Pipeline</h2>
-        <p className="placeholder-body">
-          Complete task CRUD, validation rules, category filters, and sorting controls will be connected during Day 2 implementation.
-        </p>
-        <div className="placeholder-status-tag">
-          <span className="status-dot"></span>
-          <span>Day 2 Target: Validation, categorization, and local state layer</span>
-        </div>
-      </section>
+      {/* Toolbar */}
+      <div className="tasks-toolbar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={handleOpenCreate}
+            id="create-task-btn"
+          >
+            <Plus size={16} aria-hidden="true" />
+            <span>Add New Task</span>
+          </button>
 
-      <div className="feature-spec-grid">
-        <div className="spec-item">
-          <div className="spec-title">
-            <Plus size={18} color="var(--color-primary)" aria-hidden="true" />
-            <span>Structured Input</span>
-          </div>
-          <p className="spec-desc">
-            Title (max 160 chars), optional description (max 2000 chars), priority badge, and category selector.
-          </p>
-        </div>
-
-        <div className="spec-item">
-          <div className="spec-title">
-            <Filter size={18} color="var(--color-primary)" aria-hidden="true" />
-            <span>Multi-Filter Views</span>
-          </div>
-          <p className="spec-desc">
-            Filter smoothly by category (Study, Work, Personal, Projects) and status (Pending, Completed).
-          </p>
+          <button
+            type="button"
+            className={`btn-secondary ${showFilterPanel ? 'active' : ''}`}
+            onClick={() => setShowFilterPanel(!showFilterPanel)}
+            aria-expanded={showFilterPanel}
+            aria-label="Toggle filter panel"
+          >
+            <Filter size={16} aria-hidden="true" />
+            <span>{showFilterPanel ? 'Hide Filters' : 'Filters'}</span>
+            {hasActiveFilters && (
+              <span className="filter-active-count" style={{ marginLeft: '4px' }}>
+                Active
+              </span>
+            )}
+          </button>
         </div>
 
-        <div className="spec-item">
-          <div className="spec-title">
-            <Tag size={18} color="var(--color-primary)" aria-hidden="true" />
-            <span>4-Tier Categories</span>
-          </div>
-          <p className="spec-desc">
-            Dedicated color accents and tags for clear visual distinction without cognitive clutter.
-          </p>
-        </div>
+        {hasActiveFilters && (
+          <button
+            type="button"
+            className="btn-ghost"
+            onClick={handleClearFilters}
+            style={{ fontSize: 'var(--font-size-xs)' }}
+          >
+            Clear active filters
+          </button>
+        )}
       </div>
+
+      {/* Collapsible Filter Panel */}
+      {showFilterPanel && (
+        <TaskFilters
+          filters={filters}
+          onChange={setFilters}
+          onClear={handleClearFilters}
+        />
+      )}
+
+      {/* Task List */}
+      <TaskList
+        tasks={tasks}
+        loading={loading}
+        hasActiveFilters={hasActiveFilters}
+        onToggleComplete={async (id) => {
+          await toggleComplete(id);
+        }}
+        onEdit={handleOpenEdit}
+        onDelete={async (id) => {
+          await deleteTask(id);
+        }}
+        onOpenCreateForm={handleOpenCreate}
+        onClearFilters={handleClearFilters}
+      />
+
+      {/* Create / Edit Form Modal */}
+      <TaskForm
+        isOpen={isFormOpen}
+        onClose={() => {
+          setIsFormOpen(false);
+          setEditingTask(null);
+        }}
+        onSubmit={handleFormSubmit}
+        initialTask={editingTask}
+      />
     </div>
   );
 };
