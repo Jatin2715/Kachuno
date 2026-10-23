@@ -36,9 +36,7 @@ Unlike noisy productivity apps loaded with gamified gimmicks and fake streaks, K
 ```
 Kachuno/
 ├── .env.example                # Supabase configuration template
-├── architecture.md             # Full architectural blueprint
-├── implementation-plan.md      # 7-Day implementation roadmap
-├── edge-cases.md               # 150 edge-case test matrix
+├── library/                    # Local reference library (PDFs, blueprint, architecture, implementation plan)
 ├── docs/
 │   ├── ARCHITECTURE.md         # Architecture summary
 │   └── DAILY_LOG.md            # Daily dev logs and milestones
@@ -106,8 +104,8 @@ Kachuno/
 ## 7-Day Roadmap Status
 
 - [x] **Day 1: Foundation & UI Shell** (Completed)
-- [ ] **Day 2: Task Management & My Day** (Planned)
-- [ ] **Day 3: Calendar Views** (Planned)
+- [x] **Day 2: Task Management & My Day** (Completed)
+- [x] **Day 3: Calendar & Focus Timer** (Completed)
 - [ ] **Day 4: Backend, Auth & Cloud Sync** (Planned)
 - [ ] **Day 5: Focus Timer & Progress Analytics** (Planned)
 - [ ] **Day 6: Mobile Hardening & Android Build** (Planned)

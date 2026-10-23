@@ -22,26 +22,27 @@
 ---
 
 ## Day 2 — Task Management & My Day
-- **Date:** [Planned]
+- **Date:** 2026-10-22
 - **Focus:** Task CRUD, validation rules, category filters, local persistence layer, My Day integration.
-- **Tasks:**
-  - [ ] Implement Task TypeScript types.
-  - [ ] Build temporary local data layer with localStorage caching.
-  - [ ] Implement task creation form with title validation (1-160 chars).
-  - [ ] Build task list and card components with status toggles.
-  - [ ] Add category filters (Study, Work, Personal, Projects).
-  - [ ] Connect My Day screen to today's active tasks.
+- **Completed Today:**
+  - [x] Task types, localStorage-backed `taskService`, and `useTasks` hook.
+  - [x] Task form, list, cards, filters (AND semantics), and status transitions.
+  - [x] My Day sections driven from real due dates (today, overdue, completed today).
+  - [x] Date helpers in `src/lib/dates.ts` with date-only `YYYY-MM-DD` rules.
+- **Status:** Day 2 verified; `npm run build` passes.
 
 ---
 
-## Day 3 — Calendar Views
-- **Date:** [Planned]
-- **Focus:** Month, week, and day calendar grids; timezone handling.
-- **Tasks:**
-  - [ ] Build month grid with days-of-month calculation.
-  - [ ] Build week view with hourly schedule.
-  - [ ] Implement timezone resilience and leap year handling.
-  - [ ] Connect task due dates to calendar cells.
+## Day 3 — Calendar & Focus Timer
+- **Date:** 2026-10-23
+- **Focus:** Month/week calendar views tied to task due dates; timestamp-based focus timer and session history.
+- **Completed Today:**
+  - [x] Extended `dates.ts` (Monday week start, month grid, boundaries, navigation helpers).
+  - [x] `CalendarGrid`, `WeekView`, and assembled `CalendarPage` with month/week toggle and task edit flow.
+  - [x] Focus types, `useFocusTimer` (wall-clock elapsed, pause/resume, save guard), `focusSessionService` (localStorage).
+  - [x] `FocusPage` with controls, reset confirmation, session history list; My Day shows today's focus minutes.
+- **Week-start convention:** Monday (ISO-style), documented in `dates.ts`.
+- **Status:** Day 3 complete; `npm run build` passes.
 
 ---
 

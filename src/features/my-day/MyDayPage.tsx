@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { FC } from 'react';
 import {
   Sun,
@@ -15,6 +15,7 @@ import { useTasks } from '../tasks/useTasks';
 import { TaskCard } from '../tasks/TaskCard';
 import { TaskForm } from '../tasks/TaskForm';
 import { useNavigation } from '../../app/AppRouter';
+import { focusSessionService } from '../focus/focusSessionService';
 
 export const MyDayPage: FC = () => {
   const { navigate } = useNavigation();
@@ -50,6 +51,35 @@ export const MyDayPage: FC = () => {
   const completedToday = tasks.filter(
     (t) => t.is_completed && isCompletedToday(t.completed_at)
   );
+
+  const [todayFocusSeconds, setTodayFocusSeconds] = useState(0);
+
+  useEffect(() => {
+    const loadFocus = async () => {
+      try {
+        const sessions = await focusSessionService.getFocusSessions();
+        const todaySessions = sessions.filter(
+          (s) => s.status === 'completed' && s.ended_at && isCompletedToday(s.ended_at)
+        );
+        const totalSec = todaySessions.reduce((acc, s) => acc + s.duration_seconds, 0);
+        setTodayFocusSeconds(totalSec);
+      } catch (err) {
+        console.error('Failed to load today focus time:', err);
+      }
+    };
+    loadFocus();
+    return focusSessionService.subscribe(loadFocus);
+  }, []);
+
+  const formatTodayFocusMinutes = () => {
+    const mins = Math.round(todayFocusSeconds / 60);
+    if (mins >= 60) {
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      return `${h}h ${m}m`;
+    }
+    return `${mins}m`;
+  };
 
   const handleOpenCreateForToday = () => {
     setEditingTask(null);
@@ -115,15 +145,21 @@ export const MyDayPage: FC = () => {
           <span className="stat-metric-label">Completed Today</span>
         </div>
 
-        <div className="stat-metric-card" style={{ background: 'var(--color-bg-subtle)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)', marginTop: '2px' }}>
-            <Clock size={14} />
-            <span>Day 3 Preview</span>
-          </div>
-          <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-            Focus timer arriving next
+        <button
+          type="button"
+          className="stat-metric-card"
+          style={{ background: 'var(--color-bg-subtle)', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+          onClick={() => navigate('/focus')}
+          aria-label={`Today's focus time: ${formatTodayFocusMinutes()}. Go to Focus page`}
+        >
+          <span className="stat-metric-value" style={{ fontSize: 'var(--font-size-xl)' }}>
+            {formatTodayFocusMinutes()}
           </span>
-        </div>
+          <span className="stat-metric-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Clock size={14} aria-hidden="true" />
+            Focus Today
+          </span>
+        </button>
       </div>
 
       {/* Quick Action Toolbar */}

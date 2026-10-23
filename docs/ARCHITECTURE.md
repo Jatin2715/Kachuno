@@ -1,6 +1,6 @@
 # Kachuno — Architecture Documentation
 
-For the complete technical blueprint and design specifications, refer to [architecture.md](../architecture.md) and [implementation-plan.md](../implementation-plan.md).
+For the complete technical blueprint and design specifications, refer to [architecture.md](../library/architecture.md) and [implementation-plan.md](../library/implementation-plan.md).
 
 ## Summary Architecture
 
