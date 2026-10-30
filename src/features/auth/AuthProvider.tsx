@@ -26,16 +26,19 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 const formatAuthError = (message: string) => {
   const normalized = message.toLowerCase();
 
+  if (normalized.includes('disabled') || normalized.includes('email logins are disabled') || normalized.includes('email signups are disabled')) {
+    return 'Email authentication is disabled in Supabase. In your Supabase Dashboard, go to Authentication → Providers → Email, turn "Enable Email provider" ON, and click Save.';
+  }
   if (normalized.includes('invalid login') || normalized.includes('invalid credentials')) {
-    return 'Invalid email or password. Please try again.';
+    return 'Invalid email or password. Please verify your credentials or create an account first.';
   }
   if (normalized.includes('email not confirmed')) {
-    return 'Please check your email and confirm your account before signing in.';
+    return 'Please check your email and confirm your account before signing in (or disable "Confirm email" in Supabase).';
   }
-  if (normalized.includes('email')) {
+  if (normalized.includes('invalid email') || normalized.includes('unable to validate email') || normalized.includes('email address is invalid')) {
     return 'Please enter a valid email address.';
   }
-  if (normalized.includes('password') && normalized.includes('6')) {
+  if (normalized.includes('password') && (normalized.includes('6') || normalized.includes('short') || normalized.includes('least'))) {
     return 'Password must be at least 6 characters long.';
   }
   if (normalized.includes('already registered') || normalized.includes('user already exists')) {
