@@ -68,3 +68,25 @@ DROP TRIGGER IF EXISTS tasks_updated_at ON public.tasks;
 CREATE TRIGGER tasks_updated_at
   BEFORE UPDATE ON public.tasks
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- 4. Auto-Confirm Users (Dev / Instant Access Trigger)
+UPDATE auth.users 
+SET email_confirmed_at = now(),
+    confirmed_at = now()
+WHERE email_confirmed_at IS NULL;
+
+CREATE OR REPLACE FUNCTION public.auto_confirm_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.email_confirmed_at = now();
+  NEW.confirmed_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+
+CREATE TRIGGER on_auth_user_created
+  BEFORE INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.auto_confirm_user();
+
