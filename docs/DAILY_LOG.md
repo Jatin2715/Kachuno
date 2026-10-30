@@ -47,13 +47,26 @@
 ---
 
 ## Day 4 — Backend, Auth & Cloud Sync
-- **Date:** [Planned]
-- **Focus:** Supabase Auth, PostgreSQL schema, RLS policies, cloud data sync.
-- **Tasks:**
-  - [ ] Run SQL migrations for `tasks` and `focus_sessions`.
-  - [ ] Enable Row Level Security (RLS) on all user-owned tables.
-  - [ ] Integrate Supabase client and Auth UI (sign up, sign in, sign out).
-  - [ ] Implement offline fallback and sync reconciliation.
+- **Date:** 2026-10-30
+- **Focus:** Supabase Auth, PostgreSQL schema, RLS policies, cloud data sync, and multi-tenant isolation.
+- **Completed Today:**
+  - [x] Generated idempotent SQL migrations in `supabase/migrations/`:
+    - `001_tasks.sql`: `tasks` table with strict validation constraints and RLS policy (`auth.uid() = user_id`).
+    - `002_focus_sessions.sql`: `focus_sessions` table with duration bounds and RLS policy (`auth.uid() = user_id`).
+    - `003_tasks_updated_at.sql`: PostgreSQL trigger function automatically maintaining `updated_at`.
+    - Consolidated schema in `supabase/schema.sql` for single-step setup.
+  - [x] Implemented resilient Supabase client (`src/lib/supabase.ts`) with missing-credentials guard (preventing blank screen crashes).
+  - [x] Built authentication feature (`src/features/auth/`):
+    - `AuthProvider.tsx`: Reactive session tracking, auto token refresh, user context, sign in, sign up, sign out, and offline/demo mode support.
+    - `SignInPage.tsx`: Accessible email/password form with validation, error states, and clear setup prompts.
+    - `SignUpPage.tsx`: Accessible registration form with password confirmation, minimum length validation, and email confirmation notices.
+    - `ProtectedRoute.tsx`: Route guard ensuring only authenticated sessions enter the workspace, with graceful setup guidance if env vars are missing.
+  - [x] Replaced temporary storage in `taskService.ts` and `focusSessionService.ts` with direct Supabase PostgreSQL queries while maintaining full API compatibility and reactive subscriber notifications.
+  - [x] Added user identity chip and accessible sign-out action to `AppShell.tsx` and `Sidebar.tsx`.
+- **Decisions / Security Measures:**
+  - Enforced Row-Level Security (RLS) on both `tasks` and `focus_sessions` tables; unauthorized queries return empty and cross-user writes are rejected at the database engine level.
+  - Guarded against missing Supabase credentials by rendering an informative setup screen with an optional Offline / Demo Mode fallback instead of crashing with a blank screen.
+- **Status:** Day 4 complete; `npm run build` passes with zero errors.
 
 ---
 

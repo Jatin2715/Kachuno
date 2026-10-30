@@ -1,10 +1,12 @@
 import type { FC } from 'react';
-import { Sun, CheckSquare, Calendar, Clock, BarChart3, Shield } from 'lucide-react';
+import { Sun, CheckSquare, Calendar, Clock, BarChart3, Shield, User as UserIcon, LogOut } from 'lucide-react';
 import { NAV_ITEMS, useNavigation } from '../app/AppRouter';
 import type { AppRoute } from '../app/AppRouter';
+import { useAuth } from '../features/auth/AuthProvider';
 
 export const Sidebar: FC = () => {
   const { currentRoute, navigate } = useNavigation();
+  const { user, signOut, isDemoMode } = useAuth();
 
   const renderIcon = (iconName: string, className?: string) => {
     switch (iconName) {
@@ -60,14 +62,86 @@ export const Sidebar: FC = () => {
         </ul>
       </nav>
 
-      {/* Footer Philosophy Callout */}
+      {/* User Profile & Footer Callout */}
       <div className="sidebar-footer">
+        {user?.email && (
+          <div
+            style={{
+              padding: '10px 12px',
+              borderRadius: '12px',
+              background: 'var(--color-bg-subtle)',
+              border: '1px solid rgba(27,67,50,0.1)',
+              marginBottom: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '8px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+              <div
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: '50%',
+                  background: 'var(--color-primary-light)',
+                  color: '#fff',
+                  display: 'grid',
+                  placeItems: 'center',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  flexShrink: 0,
+                }}
+              >
+                <UserIcon size={14} />
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div
+                  style={{
+                    fontSize: 'var(--font-size-xs)',
+                    fontWeight: 600,
+                    color: 'var(--color-text-primary)',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                  title={user.email}
+                >
+                  {user.email}
+                </div>
+                <div style={{ fontSize: '10px', color: 'var(--color-text-muted)' }}>
+                  {isDemoMode ? 'Offline Demo' : 'Cloud Synchronized'}
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => void signOut()}
+              title="Sign out"
+              aria-label="Sign out"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--color-text-secondary)',
+                padding: '4px',
+                borderRadius: '6px',
+                display: 'grid',
+                placeItems: 'center',
+              }}
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
+        )}
+
         <p className="sidebar-footer-quote">
           “The turtle moves forward with calm intention, never hurried, always arriving.”
         </p>
         <div className="sidebar-footer-meta">
-          <span>Day 1 Build</span>
-          <span>v0.1.0</span>
+          <span>Day 4 · Supabase Auth</span>
+          <span>v0.4.0</span>
         </div>
       </div>
     </aside>

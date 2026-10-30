@@ -1,0 +1,17 @@
+---
+description: End-of-day Kachuno workflow — verify, push, dev server
+alwaysApply: true
+---
+
+# Daily task completion (Kachuno)
+
+When the user’s **daily implementation work** for the 7-day plan is done (acceptance for that day met, or they say the day is complete):
+
+1. **Verify** — Run `npm run build` (fix failures before commit).
+2. **Commit** — Only if the user asked to commit/push or this rule applies with explicit push request; use message style from recent `git log` (e.g. `feat: …` for features).
+3. **Push** — Push the branch to `origin` (usually `main`) unless the user says not to.
+4. **Local preview** — Start or confirm `npm run dev` is running; tell the user to open **http://localhost:5173** and list **what to click** to see that day’s changes (routes/screens).
+
+If push fails (auth, hooks), report the error and do not claim success.
+
+Do not commit secrets (`.env`, keys) or gitignored `library/` reference files.

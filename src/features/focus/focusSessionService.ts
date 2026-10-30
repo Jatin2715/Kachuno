@@ -1,11 +1,5 @@
-/**
- * Kachuno Focus Session Service (Temporary Local Storage Adapter)
- * ===============================================================
- * Step 3.8: Local adapter implementing focus session persistence.
- * Replaced by Supabase PostgreSQL adapter on Day 4.
- */
-
 import type { FocusSession, CreateFocusSessionInput } from '../../types/focus';
+import { supabase } from '../../lib/supabase';
 
 const STORAGE_KEY = 'kachuno_focus_sessions_v1';
 const LISTENERS_KEY = 'kachuno_focus_updated';
@@ -31,26 +25,57 @@ function persistSessions(sessions: FocusSession[]): void {
   }
 }
 
-// In-memory guard against concurrent duplicate writes
 let isSavingInProgress = false;
 
+const normalizeSession = (session: Record<string, unknown>): FocusSession => ({
+  id: String(session.id ?? ''),
+  user_id: String(session.user_id ?? 'local-user'),
+  started_at: String(session.started_at ?? new Date().toISOString()),
+  ended_at: session.ended_at ? String(session.ended_at) : null,
+  duration_seconds: Number(session.duration_seconds ?? 0),
+  task_id: session.task_id ? String(session.task_id) : null,
+  status: (session.status as FocusSession['status']) ?? 'completed',
+  created_at: String(session.created_at ?? new Date().toISOString()),
+});
+
+async function getCurrentUserId(): Promise<string | null> {
+  if (!supabase) {
+    return 'local-user';
+  }
+
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) {
+    return null;
+  }
+
+  return data.user.id;
+}
+
 export const focusSessionService = {
-  /**
-   * Fetches all recorded focus sessions, sorted descending by started_at.
-   */
   async getFocusSessions(): Promise<FocusSession[]> {
-    // Artificial slight tick to emulate async contract
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    if (supabase) {
+      const userId = await getCurrentUserId();
+      if (!userId) return [];
+
+      const { data, error } = await supabase
+        .from('focus_sessions')
+        .select('*')
+        .eq('user_id', userId)
+        .order('started_at', { ascending: false });
+
+      if (error) {
+        throw new Error(error.message || 'Unable to load focus sessions.');
+      }
+
+      return (data ?? []).map((item) => normalizeSession(item as Record<string, unknown>));
+    }
+
     const sessions = getStoredSessions();
     return sessions.sort(
       (a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
     );
   },
 
-  /**
-   * Saves a newly completed focus session.
-   * Rejects sessions < 1 second. Guards against concurrent duplicate saves.
-   */
   async saveFocusSession(input: CreateFocusSessionInput): Promise<FocusSession> {
     if (isSavingInProgress) {
       throw new Error('Save already in progress. Please wait.');
@@ -60,11 +85,37 @@ export const focusSessionService = {
       throw new Error('Focus session duration must be at least 1 second.');
     }
 
+    if (supabase) {
+      const userId = await getCurrentUserId();
+      if (!userId) {
+        throw new Error('You must be signed in to save focus sessions.');
+      }
+
+      isSavingInProgress = true;
+      try {
+        const payload = {
+          user_id: userId,
+          started_at: input.started_at,
+          ended_at: input.ended_at,
+          duration_seconds: Math.floor(input.duration_seconds),
+          task_id: input.task_id || null,
+          status: input.status,
+        };
+
+        const { data, error } = await supabase.from('focus_sessions').insert(payload).select().single();
+        if (error) {
+          throw new Error(error.message || 'Unable to save focus session.');
+        }
+
+        window.dispatchEvent(new CustomEvent(LISTENERS_KEY));
+        return normalizeSession(data as Record<string, unknown>);
+      } finally {
+        isSavingInProgress = false;
+      }
+    }
+
     isSavingInProgress = true;
     try {
-      // Simulate real persistence delay
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
       const newSession: FocusSession = {
         id: `focus-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
         user_id: 'local-user',
@@ -78,25 +129,32 @@ export const focusSessionService = {
 
       const existing = getStoredSessions();
       persistSessions([newSession, ...existing]);
-
       return newSession;
     } finally {
       isSavingInProgress = false;
     }
   },
 
-  /**
-   * Clears or deletes a session (useful for history management).
-   */
   async deleteFocusSession(id: string): Promise<void> {
+    if (supabase) {
+      const userId = await getCurrentUserId();
+      if (!userId) {
+        throw new Error('You must be signed in to delete focus sessions.');
+      }
+
+      const { error } = await supabase.from('focus_sessions').delete().eq('id', id).eq('user_id', userId);
+      if (error) {
+        throw new Error(error.message || 'Unable to delete focus session.');
+      }
+      window.dispatchEvent(new CustomEvent(LISTENERS_KEY));
+      return;
+    }
+
     const existing = getStoredSessions();
     const filtered = existing.filter((s) => s.id !== id);
     persistSessions(filtered);
   },
 
-  /**
-   * Subscribes to focus updates.
-   */
   subscribe(callback: () => void): () => void {
     const handler = () => callback();
     window.addEventListener(LISTENERS_KEY, handler);

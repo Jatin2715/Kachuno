@@ -2,10 +2,12 @@ import type { FC, ReactNode } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { MobileNav } from '../components/MobileNav';
 import { useNavigation, NAV_ITEMS } from './AppRouter';
-import { Shield } from 'lucide-react';
+import { Shield, LogOut, User as UserIcon } from 'lucide-react';
+import { useAuth } from '../features/auth/AuthProvider';
 
 export const AppShell: FC<{ children: ReactNode }> = ({ children }) => {
   const { currentRoute } = useNavigation();
+  const { user, signOut, isDemoMode } = useAuth();
   const currentItem = NAV_ITEMS.find((item) => item.route === currentRoute) || NAV_ITEMS[0];
 
   return (
@@ -32,9 +34,62 @@ export const AppShell: FC<{ children: ReactNode }> = ({ children }) => {
             <span className="header-page-title">{currentItem.label}</span>
           </div>
 
-          {/* Status Badge */}
-          <div className="header-actions">
-            <span className="header-badge">Day 1: Shell</span>
+          {/* Status & User Actions */}
+          <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {isDemoMode ? (
+              <span
+                style={{
+                  fontSize: 'var(--font-size-xs)',
+                  fontWeight: 600,
+                  color: '#92400e',
+                  background: '#fef3c7',
+                  padding: '4px 10px',
+                  borderRadius: '20px',
+                  border: '1px solid #fde68a',
+                }}
+              >
+                Offline / Demo
+              </span>
+            ) : (
+              <span className="header-badge">Day 4: Cloud Sync</span>
+            )}
+
+            {user?.email && (
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: 'var(--font-size-xs)',
+                  color: 'var(--color-text-secondary)',
+                  maxWidth: '180px',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+                title={`Signed in as ${user.email}`}
+              >
+                <UserIcon size={14} />
+                <span>{user.email}</span>
+              </span>
+            )}
+
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={async () => {
+                try {
+                  await signOut();
+                } catch (error) {
+                  console.error('Failed to sign out:', error);
+                }
+              }}
+              style={{ fontSize: 'var(--font-size-xs)', padding: '6px 10px', display: 'flex', alignItems: 'center', gap: '6px' }}
+              aria-label="Sign out"
+            >
+              <LogOut size={14} />
+              <span>Sign out</span>
+            </button>
           </div>
         </header>
 

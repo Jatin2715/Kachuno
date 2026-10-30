@@ -1,4 +1,4 @@
-# Kachuno (કાચબો) 🐢
+# Kachuno 🐢
 
 > **Slow, steady, and deliberate productivity.**  
 > Inspired by the wisdom of the tortoise: consistent, intentional progress over frenzied burnout.
@@ -106,7 +106,7 @@ Kachuno/
 - [x] **Day 1: Foundation & UI Shell** (Completed)
 - [x] **Day 2: Task Management & My Day** (Completed)
 - [x] **Day 3: Calendar & Focus Timer** (Completed)
-- [ ] **Day 4: Backend, Auth & Cloud Sync** (Planned)
+- [x] **Day 4: Backend, Auth & Cloud Sync** (Completed)
 - [ ] **Day 5: Focus Timer & Progress Analytics** (Planned)
 - [ ] **Day 6: Mobile Hardening & Android Build** (Planned)
 - [ ] **Day 7: Production Release & Delivery** (Planned)
